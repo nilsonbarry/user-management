@@ -1,6 +1,7 @@
 #!/bin/bash
 
 LOGFILE="logs/user_report.log"
+LOGFILE="/var/log/group_report.log"
 mkdir -p logs
 
 echo "===== User Management Report =====" >> $LOGFILE
@@ -14,6 +15,19 @@ create_user() {
     if [ $? -eq 0 ]; then
         echo "✅ User $username created successfully"
         echo "User $username created" >> $LOGFILE
+    else
+        echo "❌ Failed to create user"
+    fi
+}
+
+# Create Groupe
+create_group() {
+    read -p "Enter groupname: " groupname
+    sudo groupadd $groupname
+
+    if [ $? -eq 0 ]; then
+        echo "✅ Group $groupname created successfully"
+        echo "Group $groupname created" >> $LOGFILE
     else
         echo "❌ Failed to create user"
     fi
@@ -59,26 +73,35 @@ list_users() {
     cut -d: -f1 /etc/passwd
 }
 
+# List Groups
+list_groups() {
+    echo "📋 System Groups:"
+    cut -d: -f1 /etc/group
+}
+
+
 # Menu
 while true; do
     echo ""
     echo "===== User Management Menu ====="
     echo "1. Create User"
-    echo "2. Delete User"
-    echo "3. Set Password"
-    echo "4. Add User to Group"
-    echo "5. List Users"
-    echo "6. Exit"
+    echo "2. Create Group"
+    echo "3. Delete User"
+    echo "4. Set Password"
+    echo "5. Add User to Group"
+    echo "6. List Users"
+    echo "7. Exit"
 
     read -p "Choose option: " option
 
     case $option in
         1) create_user ;;
-        2) delete_user ;;
-        3) set_password ;;
-        4) add_to_group ;;
-        5) list_users ;;
-        6) exit ;;
+	2) create_group ;;
+        3) delete_user ;;
+        4) set_password ;;
+        5) add_to_group ;;
+        6) list_users ;;
+        7) exit ;;
         *) echo "Invalid option" ;;
     esac
 done
